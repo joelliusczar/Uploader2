@@ -12,9 +12,13 @@ namespace Uploader2
     {
         [Browsable(false)]
         public string Path { get; set; }
+        
+        [Browsable(false)]
+        public string RootPath { get; set; }
 
-        public string FileName => System.IO.Path.GetFileName(this.Path);
-
+        [Browsable(false)]
+        public long SizeMB { get; set; }
+        public string AWSKey => Path?.Replace(RootPath ?? "", "")?.Trim('\\')?.Replace('\\','/');
 
         private int _percentDone;
 

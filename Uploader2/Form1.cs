@@ -26,6 +26,9 @@ namespace Uploader2
         public bool SpinnerRunning { get; set; }
         public bool PercentUpdaterRunning { get; set; }
         public int CurrentUploadPercentDone { get; set; }
+        public long TotalSize { get; set; }
+        private const string BUCKET = "";
+        private const string PARENT_FOLDER = "pb";
         public Form1()
         {
             
@@ -47,6 +50,7 @@ namespace Uploader2
             button1.BeginInvoke(new Action(() => {
                 button1.Enabled = true;
             }));
+
         }
 
         private async Task<ICollection<string>> UploadedObjects()
@@ -54,7 +58,7 @@ namespace Uploader2
             var result = new HashSet<string>();
             var request = new ListObjectsV2Request
             {
-                BucketName = "enjoymentp",
+                BucketName = BUCKET,
             };
 
             var bucketRegion = RegionEndpoint.USEast2;
@@ -72,7 +76,7 @@ namespace Uploader2
 
                     response = await client.ListObjectsV2Async(request);
                     var items = response.S3Objects
-                        .Where(o => o.Key.StartsWith("ftv"))
+                        .Where(o => o.Key.StartsWith(PARENT_FOLDER))
                         .Select(o => Path.GetFileName(o.Key))
                         .Where(o => o != null);
 
@@ -117,7 +121,7 @@ namespace Uploader2
         private async Task<bool> UploadItem(UploadableItem item)
         {
             CurrentUploadPercentDone = 0;
-            if (Uploaded?.Contains(Path.GetFileName(item.Path)) ?? false)
+            if (Uploaded?.Contains(item.AWSKey) ?? false)
             {
                 item.Status = "Skipped!";
                 return true;
@@ -125,11 +129,10 @@ namespace Uploader2
             item.Status = "Started";
 
 
-            var fileName = Path.GetFileName(item.Path);
             var request = new PutObjectRequest
             {
-                BucketName = "enjoymentp",
-                Key = $"ftv/{fileName}",
+                BucketName = BUCKET,
+                Key = $"{PARENT_FOLDER}/{item.AWSKey}",
                 FilePath = item.Path,
             };
             request.MD5Digest = await Task.Run(() => {
@@ -163,7 +166,7 @@ namespace Uploader2
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    Uploaded.Add(fileName);
+                    Uploaded.Add(item.AWSKey);
                     item.Uploaded = "Yes";
                     item.Status = "Done!";
                     item.PercentDone = 100;
@@ -270,6 +273,7 @@ namespace Uploader2
                     {
                         ListItems.Add(new UploadableItem {
                             Path = file,
+                            RootPath = item,
                             Uploaded = Uploaded?.Contains(Path.GetFileName(file)) ?? false ? "Yes" : "No",
                             Status = "Pending",
                             PercentDone = 0
@@ -280,6 +284,19 @@ namespace Uploader2
                 ListItems.ResetBindings();
 
                 countLabel.Text = ListItems.Count().ToString();
+
+                foreach (var item in ListItems)
+                {
+                    try
+                    {
+                        item.SizeMB = (new System.IO.FileInfo(item.Path).Length) / (1024 * 1000);
+                        TotalSize += item.SizeMB;
+                    }
+                    catch (Exception)
+                    { }
+                }
+
+                totalSizeLabel.Text = TotalSize.ToString() + "MB";
 
             }
         }
@@ -344,6 +361,8 @@ namespace Uploader2
             ListItems.Clear();
             button1.Enabled = true;
             button1.Text = "Start";
+            TotalSize = 0;
+            totalSizeLabel.Text = "";
             countLabel.Text = ListItems.Count().ToString();
         }
     }

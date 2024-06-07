@@ -29,11 +29,12 @@
         private void InitializeComponent()
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.Start = new System.Windows.Forms.DataGridViewButtonColumn();
             this.button1 = new System.Windows.Forms.Button();
             this.waitingLbl = new System.Windows.Forms.Label();
-            this.Start = new System.Windows.Forms.DataGridViewButtonColumn();
             this.clearButton = new System.Windows.Forms.Button();
             this.countLabel = new System.Windows.Forms.Label();
+            this.totalSizeLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,6 +53,14 @@
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.dataGridView1_DragDrop);
             this.dataGridView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.dataGridView1_DragEnter_1);
+            // 
+            // Start
+            // 
+            this.Start.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.Start.HeaderText = "Start";
+            this.Start.Name = "Start";
+            this.Start.Text = "Start";
+            this.Start.UseColumnTextForButtonValue = true;
             // 
             // button1
             // 
@@ -73,14 +82,6 @@
             this.waitingLbl.TabIndex = 3;
             this.waitingLbl.Text = "label1";
             // 
-            // Start
-            // 
-            this.Start.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.Start.HeaderText = "Start";
-            this.Start.Name = "Start";
-            this.Start.Text = "Start";
-            this.Start.UseColumnTextForButtonValue = true;
-            // 
             // clearButton
             // 
             this.clearButton.Location = new System.Drawing.Point(713, 59);
@@ -100,12 +101,21 @@
             this.countLabel.TabIndex = 5;
             this.countLabel.Text = "0";
             // 
+            // totalSizeLabel
+            // 
+            this.totalSizeLabel.AutoSize = true;
+            this.totalSizeLabel.Location = new System.Drawing.Point(156, 13);
+            this.totalSizeLabel.Name = "totalSizeLabel";
+            this.totalSizeLabel.Size = new System.Drawing.Size(0, 13);
+            this.totalSizeLabel.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.totalSizeLabel);
             this.Controls.Add(this.countLabel);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.waitingLbl);
@@ -128,6 +138,7 @@
         private System.Windows.Forms.DataGridViewButtonColumn Start;
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Label countLabel;
+        private System.Windows.Forms.Label totalSizeLabel;
     }
 }
 
